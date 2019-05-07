@@ -10,10 +10,10 @@ import (
 
 const (
 	ioctlVersion = 0xC0406400
-	ioctlGetCap = 0xC010640C
+	ioctlGetCap  = 0xC010640C
 
 	ioctlModeGetResources = 0xC04064A0
-	ioctlModeGetCRTC = 0xC06864A1
+	ioctlModeGetCRTC      = 0xC06864A1
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -32,12 +32,12 @@ func allocBytes(ptr **byte, len uint64) []byte {
 
 type versionResp struct {
 	major, minor, patch int32
-	nameLen uint64
-	name *byte
-	dateLen uint64
-	date *byte
-	descLen uint64
-	desc *byte
+	nameLen             uint64
+	name                *byte
+	dateLen             uint64
+	date                *byte
+	descLen             uint64
+	desc                *byte
 }
 
 func version(fd uintptr, v *versionResp) error {
@@ -56,9 +56,9 @@ func getCap(fd uintptr, cap uint64) (uint64, error) {
 }
 
 type modeCardResp struct {
-	fbs, crtcs, connectors, encoders *uint32
+	fbs, crtcs, connectors, encoders             *uint32
 	fbsLen, crtcsLen, connectorsLen, encodersLen uint32
-	minWidth, maxWidth, minHeight, maxHeight uint32
+	minWidth, maxWidth, minHeight, maxHeight     uint32
 }
 
 func modeGetResources(fd uintptr, r *modeCardResp) error {
@@ -66,20 +66,20 @@ func modeGetResources(fd uintptr, r *modeCardResp) error {
 }
 
 type modeModeInfo struct {
-	clock uint32
+	clock                                         uint32
 	hDisplay, hSyncStart, hSyncEnd, hTotal, hSkew uint16
 	vDisplay, vSyncStart, vSyncEnd, vTotal, vScan uint16
 
 	vRefresh uint32
 
 	flags uint32
-	typ uint32
-	name [32]byte
+	typ   uint32
+	name  [32]byte
 }
 
 type modeCRTCResp struct {
 	// For ioctlModeSetCRTC
-	setConnectors *uint32
+	setConnectors    *uint32
 	setConnectorsLen uint32
 
 	id uint32
@@ -89,7 +89,7 @@ type modeCRTCResp struct {
 
 	gammaSize uint32
 	modeValid uint32
-	mode modeModeInfo
+	mode      modeModeInfo
 }
 
 func modeGetCRTC(fd uintptr, r *modeCRTCResp) error {

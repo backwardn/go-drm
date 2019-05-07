@@ -16,7 +16,7 @@ func NewNode(fd uintptr) *Node {
 
 type Version struct {
 	Major, Minor, Patch int32
-	Name, Date, Desc string
+	Name, Date, Desc    string
 }
 
 func (d *Node) Version() (*Version, error) {
@@ -37,9 +37,9 @@ func (d *Node) Version() (*Version, error) {
 		Major: v.major,
 		Minor: v.minor,
 		Patch: v.patch,
-		Name: string(name),
-		Date: string(date),
-		Desc: string(desc),
+		Name:  string(name),
+		Date:  string(date),
+		Desc:  string(desc),
 	}, nil
 }
 
@@ -48,7 +48,7 @@ func (d *Node) GetCap(cap Cap) (uint64, error) {
 }
 
 type ModeCard struct {
-	FBs, CRTCs, Connectors, Encoders []ObjectID
+	FBs, CRTCs, Connectors, Encoders         []ObjectID
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32
 }
 
@@ -87,14 +87,14 @@ func (d *Node) ModeGetResources() (*ModeCard, error) {
 		}
 
 		return &ModeCard{
-			FBs: fbs,
-			CRTCs: crtcs,
+			FBs:        fbs,
+			CRTCs:      crtcs,
 			Connectors: connectors,
-			Encoders: encoders,
-			MinWidth: r.minWidth,
-			MaxWidth: r.maxWidth,
-			MinHeight: r.minHeight,
-			MaxHeight: r.maxHeight,
+			Encoders:   encoders,
+			MinWidth:   r.minWidth,
+			MaxWidth:   r.maxWidth,
+			MinHeight:  r.minHeight,
+			MaxHeight:  r.maxHeight,
 		}, nil
 	}
 }
@@ -109,43 +109,43 @@ func newString(b []byte) string {
 }
 
 type ModeModeInfo struct {
-	Clock uint32
+	Clock                                         uint32
 	HDisplay, HSyncStart, HSyncEnd, HTotal, HSkew uint16
 	VDisplay, VSyncStart, VSyncEnd, VTotal, VScan uint16
 
 	VRefresh uint32
 
 	Flags uint32
-	Type uint32
-	Name string
+	Type  uint32
+	Name  string
 }
 
 func newModeModeInfo(info *modeModeInfo) *ModeModeInfo {
 	return &ModeModeInfo{
-		Clock: info.clock,
-		HDisplay: info.hDisplay,
+		Clock:      info.clock,
+		HDisplay:   info.hDisplay,
 		HSyncStart: info.hSyncStart,
-		HSyncEnd: info.hSyncEnd,
-		HTotal: info.hTotal,
-		HSkew: info.hSkew,
-		VDisplay: info.vDisplay,
+		HSyncEnd:   info.hSyncEnd,
+		HTotal:     info.hTotal,
+		HSkew:      info.hSkew,
+		VDisplay:   info.vDisplay,
 		VSyncStart: info.vSyncStart,
-		VSyncEnd: info.vSyncEnd,
-		VTotal: info.vTotal,
-		VScan: info.vScan,
-		VRefresh: info.vRefresh,
-		Flags: info.flags,
-		Type: info.typ,
-		Name: newString(info.name[:]),
+		VSyncEnd:   info.vSyncEnd,
+		VTotal:     info.vTotal,
+		VScan:      info.vScan,
+		VRefresh:   info.vRefresh,
+		Flags:      info.flags,
+		Type:       info.typ,
+		Name:       newString(info.name[:]),
 	}
 }
 
 type ModeCRTC struct {
-	ID ObjectID
-	FB ObjectID
-	X, Y uint32
+	ID        ObjectID
+	FB        ObjectID
+	X, Y      uint32
 	GammaSize uint32
-	Mode *ModeModeInfo
+	Mode      *ModeModeInfo
 }
 
 func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
@@ -160,11 +160,11 @@ func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 	}
 
 	return &ModeCRTC{
-		ID: ObjectID(r.id),
-		FB: ObjectID(r.fb),
-		X: r.x,
-		Y: r.y,
+		ID:        ObjectID(r.id),
+		FB:        ObjectID(r.fb),
+		X:         r.x,
+		Y:         r.y,
 		GammaSize: r.gammaSize,
-		Mode: mode,
+		Mode:      mode,
 	}, nil
 }
