@@ -25,4 +25,7 @@ func main() {
 
 	val, err := d.GetCap(drm.CapDumbBuffer)
 	log.Println("CapDumbBuffer", val, err)
+
+	r, err := d.ModeGetResources()
+	log.Println("ModeGetResources", r, err)
 }

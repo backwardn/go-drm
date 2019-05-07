@@ -11,6 +11,8 @@ import (
 const (
 	ioctlVersion = 0xC0406400
 	ioctlGetCap = 0xC010640C
+
+	ioctlModeGetResources = 0xC04064A0
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -50,4 +52,14 @@ func getCap(fd uintptr, cap uint64) (uint64, error) {
 	arg := getCapArg{cap: cap}
 	err := ioctl(fd, ioctlGetCap, unsafe.Pointer(&arg))
 	return arg.ret, err
+}
+
+type modeCardResp struct {
+	fbs, crtcs, connectors, encoders *uint32
+	fbsLen, crtcsLen, connectorsLen, encodersLen uint32
+	minWidth, maxWidth, minHeight, maxHeight uint32
+}
+
+func modeGetResources(fd uintptr, r *modeCardResp) error {
+	return ioctl(fd, ioctlModeGetResources, unsafe.Pointer(r))
 }
