@@ -13,6 +13,7 @@ const (
 	ioctlGetCap = 0xC010640C
 
 	ioctlModeGetResources = 0xC04064A0
+	ioctlModeGetCRTC = 0xC06864A1
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -62,4 +63,35 @@ type modeCardResp struct {
 
 func modeGetResources(fd uintptr, r *modeCardResp) error {
 	return ioctl(fd, ioctlModeGetResources, unsafe.Pointer(r))
+}
+
+type modeModeInfo struct {
+	clock uint32
+	hDisplay, hSyncStart, hSyncEnd, hTotal, hSkew uint16
+	vDisplay, vSyncStart, vSyncEnd, vTotal, vScan uint16
+
+	vRefresh uint32
+
+	flags uint32
+	typ uint32
+	name [32]byte
+}
+
+type modeCRTCResp struct {
+	// For ioctlModeSetCRTC
+	setConnectors *uint32
+	setConnectorsLen uint32
+
+	id uint32
+	fb uint32
+
+	x, y uint32
+
+	gammaSize uint32
+	modeValid uint32
+	mode modeModeInfo
+}
+
+func modeGetCRTC(fd uintptr, r *modeCRTCResp) error {
+	return ioctl(fd, ioctlModeGetCRTC, unsafe.Pointer(r))
 }

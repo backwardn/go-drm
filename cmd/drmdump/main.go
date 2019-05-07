@@ -27,5 +27,16 @@ func main() {
 	log.Println("CapDumbBuffer", val, err)
 
 	r, err := n.ModeGetResources()
-	log.Println("ModeGetResources", r, err)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("ModeGetResources", r)
+
+	for _, id := range r.CRTCs {
+		crtc, err := n.ModeGetCRTC(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("ModeGetCRTC", crtc, crtc.Mode)
+	}
 }

@@ -98,3 +98,73 @@ func (d *Node) ModeGetResources() (*ModeCardResp, error) {
 		}, nil
 	}
 }
+
+func newString(b []byte) string {
+	for i := 0; i < len(b); i++ {
+		if b[i] == 0 {
+			return string(b[:i])
+		}
+	}
+	return string(b)
+}
+
+type ModeModeInfo struct {
+	Clock uint32
+	HDisplay, HSyncStart, HSyncEnd, HTotal, HSkew uint16
+	VDisplay, VSyncStart, VSyncEnd, VTotal, VScan uint16
+
+	VRefresh uint32
+
+	Flags uint32
+	Type uint32
+	Name string
+}
+
+func newModeModeInfo(info *modeModeInfo) *ModeModeInfo {
+	return &ModeModeInfo{
+		Clock: info.clock,
+		HDisplay: info.hDisplay,
+		HSyncStart: info.hSyncStart,
+		HSyncEnd: info.hSyncEnd,
+		HTotal: info.hTotal,
+		HSkew: info.hSkew,
+		VDisplay: info.vDisplay,
+		VSyncStart: info.vSyncStart,
+		VSyncEnd: info.vSyncEnd,
+		VTotal: info.vTotal,
+		VScan: info.vScan,
+		VRefresh: info.vRefresh,
+		Flags: info.flags,
+		Type: info.typ,
+		Name: newString(info.name[:]),
+	}
+}
+
+type ModeCRTCResp struct {
+	ID ObjectID
+	FB ObjectID
+	X, Y uint32
+	GammaSize uint32
+	Mode *ModeModeInfo
+}
+
+func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTCResp, error) {
+	r := modeCRTCResp{id: uint32(id)}
+	if err := modeGetCRTC(d.fd, &r); err != nil {
+		return nil, err
+	}
+
+	var mode *ModeModeInfo
+	if r.modeValid != 0 {
+		mode = newModeModeInfo(&r.mode)
+	}
+
+	return &ModeCRTCResp{
+		ID: ObjectID(r.id),
+		FB: ObjectID(r.fb),
+		X: r.x,
+		Y: r.y,
+		GammaSize: r.gammaSize,
+		Mode: mode,
+	}, nil
+}
