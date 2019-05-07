@@ -6,12 +6,12 @@ import (
 
 type ObjectID uint32
 
-type Device struct {
+type Node struct {
 	fd uintptr
 }
 
-func NewDevice(fd uintptr) *Device {
-	return &Device{fd}
+func NewNode(fd uintptr) *Node {
+	return &Node{fd}
 }
 
 type VersionResp struct {
@@ -19,7 +19,7 @@ type VersionResp struct {
 	Name, Date, Desc string
 }
 
-func (d *Device) Version() (*VersionResp, error) {
+func (d *Node) Version() (*VersionResp, error) {
 	var v versionResp
 	if err := version(d.fd, &v); err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (d *Device) Version() (*VersionResp, error) {
 	}, nil
 }
 
-func (d *Device) GetCap(cap Cap) (uint64, error) {
+func (d *Node) GetCap(cap Cap) (uint64, error) {
 	return getCap(d.fd, uint64(cap))
 }
 
@@ -52,7 +52,7 @@ type ModeCardResp struct {
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32
 }
 
-func (d *Device) ModeGetResources() (*ModeCardResp, error) {
+func (d *Node) ModeGetResources() (*ModeCardResp, error) {
 	for {
 		var r modeCardResp
 		if err := modeGetResources(d.fd, &r); err != nil {

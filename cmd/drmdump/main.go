@@ -16,16 +16,16 @@ func main() {
 	}
 	defer f.Close()
 
-	d := drm.NewDevice(f.Fd())
-	v, err := d.Version()
+	n := drm.NewNode(f.Fd())
+	v, err := n.Version()
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Version", v)
 
-	val, err := d.GetCap(drm.CapDumbBuffer)
+	val, err := n.GetCap(drm.CapDumbBuffer)
 	log.Println("CapDumbBuffer", val, err)
 
-	r, err := d.ModeGetResources()
+	r, err := n.ModeGetResources()
 	log.Println("ModeGetResources", r, err)
 }
