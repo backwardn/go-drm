@@ -14,12 +14,12 @@ func NewNode(fd uintptr) *Node {
 	return &Node{fd}
 }
 
-type VersionResp struct {
+type Version struct {
 	Major, Minor, Patch int32
 	Name, Date, Desc string
 }
 
-func (d *Node) Version() (*VersionResp, error) {
+func (d *Node) Version() (*Version, error) {
 	var v versionResp
 	if err := version(d.fd, &v); err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (d *Node) Version() (*VersionResp, error) {
 		return nil, err
 	}
 
-	return &VersionResp{
+	return &Version{
 		Major: v.major,
 		Minor: v.minor,
 		Patch: v.patch,
@@ -47,12 +47,12 @@ func (d *Node) GetCap(cap Cap) (uint64, error) {
 	return getCap(d.fd, uint64(cap))
 }
 
-type ModeCardResp struct {
+type ModeCard struct {
 	FBs, CRTCs, Connectors, Encoders []ObjectID
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32
 }
 
-func (d *Node) ModeGetResources() (*ModeCardResp, error) {
+func (d *Node) ModeGetResources() (*ModeCard, error) {
 	for {
 		var r modeCardResp
 		if err := modeGetResources(d.fd, &r); err != nil {
@@ -86,7 +86,7 @@ func (d *Node) ModeGetResources() (*ModeCardResp, error) {
 			continue
 		}
 
-		return &ModeCardResp{
+		return &ModeCard{
 			FBs: fbs,
 			CRTCs: crtcs,
 			Connectors: connectors,
@@ -140,7 +140,7 @@ func newModeModeInfo(info *modeModeInfo) *ModeModeInfo {
 	}
 }
 
-type ModeCRTCResp struct {
+type ModeCRTC struct {
 	ID ObjectID
 	FB ObjectID
 	X, Y uint32
@@ -148,7 +148,7 @@ type ModeCRTCResp struct {
 	Mode *ModeModeInfo
 }
 
-func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTCResp, error) {
+func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 	r := modeCRTCResp{id: uint32(id)}
 	if err := modeGetCRTC(d.fd, &r); err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTCResp, error) {
 		mode = newModeModeInfo(&r.mode)
 	}
 
-	return &ModeCRTCResp{
+	return &ModeCRTC{
 		ID: ObjectID(r.id),
 		FB: ObjectID(r.fb),
 		X: r.x,
