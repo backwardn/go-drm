@@ -3,14 +3,13 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"git.sr.ht/~emersion/go-drm"
 )
 
-func main() {
-	devPath := "/dev/dri/card0"
-
-	f, err := os.Open(devPath)
+func node(nodePath string) {
+	f, err := os.Open(nodePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,5 +37,17 @@ func main() {
 			log.Fatal(err)
 		}
 		log.Println("ModeGetCRTC", crtc, crtc.Mode)
+	}
+}
+
+func main() {
+	paths, err := filepath.Glob(drm.NodePrimaryPattern)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, p := range paths {
+		log.Println("Node", p)
+		node(p)
 	}
 }
