@@ -10,17 +10,8 @@ import (
 
 const (
 	ioctlVersion = 0xC0406400
+	ioctlGetCap = 0xC010640C
 )
-
-type versionResp struct {
-	major, minor, patch int32
-	nameLen uint64
-	name *byte
-	dateLen uint64
-	date *byte
-	descLen uint64
-	desc *byte
-}
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
 	_, _, errno := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(nr), uintptr(ptr))
@@ -36,6 +27,27 @@ func allocBytes(ptr **byte, len uint64) []byte {
 	return b
 }
 
+type versionResp struct {
+	major, minor, patch int32
+	nameLen uint64
+	name *byte
+	dateLen uint64
+	date *byte
+	descLen uint64
+	desc *byte
+}
+
 func version(fd uintptr, v *versionResp) error {
 	return ioctl(fd, ioctlVersion, unsafe.Pointer(v))
+}
+
+type getCapArg struct {
+	cap uint64
+	ret uint64
+}
+
+func getCap(fd uintptr, cap uint64) (uint64, error) {
+	arg := getCapArg{cap: cap}
+	err := ioctl(fd, ioctlGetCap, unsafe.Pointer(&arg))
+	return arg.ret, err
 }

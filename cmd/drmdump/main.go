@@ -21,5 +21,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(v)
+	log.Println("Version", v)
+
+	val, err := d.GetCap(drm.CapDumbBuffer)
+	log.Println("CapDumbBuffer", val, err)
 }

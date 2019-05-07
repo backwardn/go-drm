@@ -36,3 +36,7 @@ func (d *Device) Version() (*VersionResp, error) {
 		Desc: string(desc),
 	}, nil
 }
+
+func (d *Device) GetCap(cap Cap) (uint64, error) {
+	return getCap(d.fd, uint64(cap))
+}
