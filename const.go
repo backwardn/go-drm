@@ -7,6 +7,20 @@ const (
 	CapVblankHighCRTC Cap = 0x2
 	CapDumbPreferredDepth Cap = 0x3
 	CapDumbPreferredShadow Cap = 0x4
+	CapPrime Cap = 0x5
+	CapTimestampMonotonic Cap =0x6
+	CapAsyncPageFlip Cap = 0x7
+	CapCursorWidth Cap = 0x8
+	CapCursorHeight Cap = 0x9
+	CapAddFB2Modifiers Cap = 0x10
+	CapPageFlipTarget Cap = 0x11
+	CapCRTCInVBlankEvent Cap = 0x12
+	CapSyncObj Cap = 0x13
+)
+
+const (
+	CapPrimeImport = 0x1
+	CapPrimeExport = 0x2
 )
 
 type Connector uint32
