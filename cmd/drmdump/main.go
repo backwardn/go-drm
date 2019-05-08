@@ -60,6 +60,11 @@ func node(nodePath string) {
 		}
 		log.Println("ModeGetConnector", conn)
 	}
+
+	_, err = n.ModeGetPlaneResources()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {

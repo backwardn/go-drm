@@ -17,6 +17,7 @@ const (
 	ioctlModeGetCRTC      = 0xC06864A1
 	ioctlModeGetEncoder   = 0xC01464A6
 	ioctlModeGetConnector = 0xC05064A7
+	ioctlModeGetPlaneResources = 0xC01064B5
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -146,4 +147,13 @@ type modeConnectorResp struct {
 
 func modeGetConnector(fd uintptr, r *modeConnectorResp) error {
 	return ioctl(fd, ioctlModeGetConnector, unsafe.Pointer(r))
+}
+
+type modePlaneResourcesResp struct {
+	planes *uint32
+	planesLen uint32
+}
+
+func modeGetPlaneResources(fd uintptr, r *modePlaneResourcesResp) error {
+	return ioctl(fd, ioctlModeGetPlaneResources, unsafe.Pointer(r))
 }

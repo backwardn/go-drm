@@ -295,3 +295,29 @@ func (n *Node) ModeGetConnector(id ConnectorID) (*ModeConnector, error) {
 		}, nil
 	}
 }
+
+func (n *Node) ModeGetPlaneResources() ([]PlaneID, error) {
+	for {
+		var r modePlaneResourcesResp
+		if err := modeGetPlaneResources(n.fd, &r); err != nil {
+			return nil, err
+		}
+		count := r
+
+		var planes []PlaneID
+		if r.planesLen > 0 {
+			planes = make([]PlaneID, r.planesLen)
+			r.planes = (*uint32)(unsafe.Pointer(&planes[0]))
+		}
+
+		if err := modeGetPlaneResources(n.fd, &r); err != nil {
+			return nil, err
+		}
+
+		if r.planesLen != count.planesLen {
+			continue
+		}
+
+		return planes, nil
+	}
+}
