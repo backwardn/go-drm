@@ -4,6 +4,45 @@ import (
 	"unsafe"
 )
 
+type ObjectType uint32
+
+const (
+	ObjectAny       ObjectType = 0
+	ObjectCRTC      ObjectType = 0xCCCCCCCC
+	ObjectConnector ObjectType = 0xC0C0C0C0
+	ObjectEncoder   ObjectType = 0xE0E0E0E0
+	ObjectMode      ObjectType = 0xDEDEDEDE
+	ObjectProperty  ObjectType = 0xB0B0B0B0
+	ObjectFB        ObjectType = 0xFBFBFBFB
+	ObjectBlob      ObjectType = 0xBBBBBBBB
+	ObjectPlane     ObjectType = 0xEEEEEEEE
+)
+
+func (t ObjectType) String() string {
+	switch t {
+	case ObjectAny:
+		return "Any"
+	case ObjectCRTC:
+		return "CRTC"
+	case ObjectConnector:
+		return "Connector"
+	case ObjectEncoder:
+		return "Encoder"
+	case ObjectMode:
+		return "Mode"
+	case ObjectProperty:
+		return "Property"
+	case ObjectFB:
+		return "FB"
+	case ObjectBlob:
+		return "Blob"
+	case ObjectPlane:
+		return "Plane"
+	default:
+		return "Unknown"
+	}
+}
+
 type (
 	ObjectID    uint32
 	CRTCID      ObjectID
@@ -15,6 +54,83 @@ type (
 	BlobID      ObjectID
 	PlaneID     ObjectID
 )
+
+type AnyID interface {
+	Type() ObjectType
+	Object() ObjectID
+}
+
+func (id ObjectID) Type() ObjectType {
+	return ObjectAny
+}
+
+func (id ObjectID) Object() ObjectID {
+	return id
+}
+
+func (id CRTCID) Type() ObjectType {
+	return ObjectCRTC
+}
+
+func (id CRTCID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id ConnectorID) Type() ObjectType {
+	return ObjectConnector
+}
+
+func (id ConnectorID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id EncoderID) Type() ObjectType {
+	return ObjectEncoder
+}
+
+func (id EncoderID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id ModeID) Type() ObjectType {
+	return ObjectMode
+}
+
+func (id ModeID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id PropertyID) Type() ObjectType {
+	return ObjectProperty
+}
+
+func (id PropertyID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id FBID) Type() ObjectType {
+	return ObjectFB
+}
+
+func (id FBID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id BlobID) Type() ObjectType {
+	return ObjectBlob
+}
+
+func (id BlobID) Object() ObjectID {
+	return ObjectID(id)
+}
+
+func (id PlaneID) Type() ObjectType {
+	return ObjectPlane
+}
+
+func (id PlaneID) Object() ObjectID {
+	return ObjectID(id)
+}
 
 type Node struct {
 	fd uintptr
