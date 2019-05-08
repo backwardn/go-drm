@@ -321,3 +321,48 @@ func (n *Node) ModeGetPlaneResources() ([]PlaneID, error) {
 		return planes, nil
 	}
 }
+
+type ModePlane struct {
+	ID PlaneID
+
+	CRTC CRTCID
+	FB   FBID
+
+	PossibleCRTCs uint32
+	GammaSize     uint32
+
+	Formats []Format
+}
+
+func (n *Node) ModeGetPlane(id PlaneID) (*ModePlane, error) {
+	for {
+		r := modePlaneResp{id: uint32(id)}
+		if err := modeGetPlane(n.fd, &r); err != nil {
+			return nil, err
+		}
+		count := r
+
+		var formats []Format
+		if r.formatsLen > 0 {
+			formats = make([]Format, r.formatsLen)
+			r.formats = (*uint32)(unsafe.Pointer(&formats[0]))
+		}
+
+		if err := modeGetPlane(n.fd, &r); err != nil {
+			return nil, err
+		}
+
+		if r.formatsLen != count.formatsLen {
+			continue
+		}
+
+		return &ModePlane{
+			ID:            PlaneID(r.id),
+			CRTC:          CRTCID(r.crtc),
+			FB:            FBID(r.fb),
+			PossibleCRTCs: r.possibleCRTCs,
+			GammaSize:     r.gammaSize,
+			Formats:       formats,
+		}, nil
+	}
+}

@@ -61,9 +61,17 @@ func node(nodePath string) {
 		log.Println("ModeGetConnector", conn)
 	}
 
-	_, err = n.ModeGetPlaneResources()
+	planes, err := n.ModeGetPlaneResources()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	for _, id := range planes {
+		plane, err := n.ModeGetPlane(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("ModeGetPlane", plane)
 	}
 }
 
