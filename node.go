@@ -4,7 +4,17 @@ import (
 	"unsafe"
 )
 
-type ObjectID uint32
+type (
+	ObjectID    uint32
+	CRTCID      ObjectID
+	ConnectorID ObjectID
+	EncoderID   ObjectID
+	ModeID      ObjectID
+	PropertyID  ObjectID
+	FBID        ObjectID
+	BlobID      ObjectID
+	PlaneID     ObjectID
+)
 
 type Node struct {
 	fd uintptr
@@ -63,7 +73,10 @@ func (n *Node) SetClientCap(cap ClientCap, val uint64) error {
 }
 
 type ModeCard struct {
-	FBs, CRTCs, Connectors, Encoders         []ObjectID
+	FBs                                      []FBID
+	CRTCs                                    []CRTCID
+	Connectors                               []ConnectorID
+	Encoders                                 []EncoderID
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32
 }
 
@@ -75,21 +88,24 @@ func (n *Node) ModeGetResources() (*ModeCard, error) {
 		}
 		count := r
 
-		var fbs, crtcs, connectors, encoders []ObjectID
+		var fbs []FBID
+		var crtcs []CRTCID
+		var connectors []ConnectorID
+		var encoders []EncoderID
 		if r.fbsLen > 0 {
-			fbs = make([]ObjectID, r.fbsLen)
+			fbs = make([]FBID, r.fbsLen)
 			r.fbs = (*uint32)(unsafe.Pointer(&fbs[0]))
 		}
 		if r.crtcsLen > 0 {
-			crtcs = make([]ObjectID, r.crtcsLen)
+			crtcs = make([]CRTCID, r.crtcsLen)
 			r.crtcs = (*uint32)(unsafe.Pointer(&crtcs[0]))
 		}
 		if r.connectorsLen > 0 {
-			connectors = make([]ObjectID, r.connectorsLen)
+			connectors = make([]ConnectorID, r.connectorsLen)
 			r.connectors = (*uint32)(unsafe.Pointer(&connectors[0]))
 		}
 		if r.encodersLen > 0 {
-			encoders = make([]ObjectID, r.encodersLen)
+			encoders = make([]EncoderID, r.encodersLen)
 			r.encoders = (*uint32)(unsafe.Pointer(&encoders[0]))
 		}
 
@@ -164,14 +180,14 @@ func newModeModeInfoList(infos []modeModeInfo) []ModeModeInfo {
 }
 
 type ModeCRTC struct {
-	ID        ObjectID
-	FB        ObjectID
+	ID        CRTCID
+	FB        FBID
 	X, Y      uint32
 	GammaSize uint32
 	Mode      *ModeModeInfo
 }
 
-func (n *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
+func (n *Node) ModeGetCRTC(id CRTCID) (*ModeCRTC, error) {
 	r := modeCRTCResp{id: uint32(id)}
 	if err := modeGetCRTC(n.fd, &r); err != nil {
 		return nil, err
@@ -183,8 +199,8 @@ func (n *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 	}
 
 	return &ModeCRTC{
-		ID:        ObjectID(r.id),
-		FB:        ObjectID(r.fb),
+		ID:        CRTCID(r.id),
+		FB:        FBID(r.fb),
 		X:         r.x,
 		Y:         r.y,
 		GammaSize: r.gammaSize,
@@ -193,31 +209,31 @@ func (n *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 }
 
 type ModeEncoder struct {
-	ID                            ObjectID
+	ID                            EncoderID
 	Type                          EncoderType
-	CRTC                          ObjectID
+	CRTC                          CRTCID
 	PossibleCRTCs, PossibleClones uint32
 }
 
-func (n *Node) ModeGetEncoder(id ObjectID) (*ModeEncoder, error) {
+func (n *Node) ModeGetEncoder(id EncoderID) (*ModeEncoder, error) {
 	r := modeEncoderResp{id: uint32(id)}
 	if err := modeGetEncoder(n.fd, &r); err != nil {
 		return nil, err
 	}
 
 	return &ModeEncoder{
-		ID:             ObjectID(r.id),
+		ID:             EncoderID(r.id),
 		Type:           EncoderType(r.typ),
-		CRTC:           ObjectID(r.crtc),
+		CRTC:           CRTCID(r.crtc),
 		PossibleCRTCs:  r.possibleCRTCs,
 		PossibleClones: r.possibleClones,
 	}, nil
 }
 
 type ModeConnector struct {
-	PossibleEncoders []ObjectID
+	PossibleEncoders []EncoderID
 	Modes            []ModeModeInfo
-	PropIDs          []ObjectID
+	PropIDs          []PropertyID
 	PropValues       []uint64
 
 	Encoder ObjectID
@@ -229,7 +245,7 @@ type ModeConnector struct {
 	Subpixel            Subpixel
 }
 
-func (n *Node) ModeGetConnector(id ObjectID) (*ModeConnector, error) {
+func (n *Node) ModeGetConnector(id ConnectorID) (*ModeConnector, error) {
 	for {
 		r := modeConnectorResp{id: uint32(id)}
 		if err := modeGetConnector(n.fd, &r); err != nil {
@@ -237,11 +253,12 @@ func (n *Node) ModeGetConnector(id ObjectID) (*ModeConnector, error) {
 		}
 		count := r
 
-		var encoders, propIDs []ObjectID
+		var encoders []EncoderID
+		var propIDs []PropertyID
 		var modes []modeModeInfo
 		var propValues []uint64
 		if r.propsLen > 0 {
-			propIDs = make([]ObjectID, r.propsLen)
+			propIDs = make([]PropertyID, r.propsLen)
 			r.propIDs = (*uint32)(unsafe.Pointer(&propIDs[0]))
 			propValues = make([]uint64, r.propsLen)
 			r.propValues = (*uint64)(unsafe.Pointer(&propValues[0]))
@@ -251,7 +268,7 @@ func (n *Node) ModeGetConnector(id ObjectID) (*ModeConnector, error) {
 			r.modes = (*modeModeInfo)(unsafe.Pointer(&modes[0]))
 		}
 		if r.encodersLen > 0 {
-			encoders = make([]ObjectID, r.encodersLen)
+			encoders = make([]EncoderID, r.encodersLen)
 			r.encoders = (*uint32)(unsafe.Pointer(&encoders[0]))
 		}
 
