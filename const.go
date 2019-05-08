@@ -144,3 +144,42 @@ func (c Connector) String() string {
 		return "Unknown"
 	}
 }
+
+type EncoderType uint32
+
+const (
+	EncoderNone    EncoderType = 0
+	EncoderDAC     EncoderType = 1
+	EncoderTDMS    EncoderType = 2
+	EncoderLVDS    EncoderType = 3
+	EncoderTVDAC   EncoderType = 4
+	EncoderVirtual EncoderType = 5
+	EncoderDSI     EncoderType = 6
+	EncoderDPMST   EncoderType = 7
+	EncoderDPI     EncoderType = 8
+)
+
+func (t EncoderType) String() string {
+	switch t {
+	case EncoderNone:
+		return "None"
+	case EncoderDAC:
+		return "DAC"
+	case EncoderTDMS:
+		return "TDMS"
+	case EncoderLVDS:
+		return "LVDS"
+	case EncoderTVDAC:
+		return "TVDAC"
+	case EncoderVirtual:
+		return "Virtual"
+	case EncoderDSI:
+		return "DSI"
+	case EncoderDPMST:
+		return "DPMST"
+	case EncoderDPI:
+		return "DPI"
+	default:
+		return "Unknown"
+	}
+}

@@ -15,6 +15,7 @@ const (
 
 	ioctlModeGetResources = 0xC04064A0
 	ioctlModeGetCRTC      = 0xC06864A1
+	ioctlModeGetEncoder   = 0xC01464A6
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -105,4 +106,17 @@ type modeCRTCResp struct {
 
 func modeGetCRTC(fd uintptr, r *modeCRTCResp) error {
 	return ioctl(fd, ioctlModeGetCRTC, unsafe.Pointer(r))
+}
+
+type modeEncoderResp struct {
+	id  uint32
+	typ uint32
+
+	crtc uint32
+
+	possibleCRTCs, possibleClones uint32
+}
+
+func modeGetEncoder(fd uintptr, r *modeEncoderResp) error {
+	return ioctl(fd, ioctlModeGetEncoder, unsafe.Pointer(r))
 }

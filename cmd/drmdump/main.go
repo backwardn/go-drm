@@ -44,6 +44,14 @@ func node(nodePath string) {
 		}
 		log.Println("ModeGetCRTC", crtc, crtc.Mode)
 	}
+
+	for _, id := range r.Encoders {
+		enc, err := n.ModeGetEncoder(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("ModeGetEncoder", enc)
+	}
 }
 
 func main() {

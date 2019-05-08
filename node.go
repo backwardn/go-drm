@@ -183,3 +183,25 @@ func (n *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 		Mode:      mode,
 	}, nil
 }
+
+type ModeEncoder struct {
+	ID                            ObjectID
+	Type                          EncoderType
+	CRTC                          ObjectID
+	PossibleCRTCs, PossibleClones uint32
+}
+
+func (n *Node) ModeGetEncoder(id ObjectID) (*ModeEncoder, error) {
+	r := modeEncoderResp{id: uint32(id)}
+	if err := modeGetEncoder(n.fd, &r); err != nil {
+		return nil, err
+	}
+
+	return &ModeEncoder{
+		ID:             ObjectID(r.id),
+		Type:           EncoderType(r.typ),
+		CRTC:           ObjectID(r.crtc),
+		PossibleCRTCs:  r.possibleCRTCs,
+		PossibleClones: r.possibleClones,
+	}, nil
+}
