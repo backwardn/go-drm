@@ -183,3 +183,50 @@ func (t EncoderType) String() string {
 		return "Unknown"
 	}
 }
+
+type ConnectorStatus uint32
+
+const (
+	ConnectorStatusConnected    ConnectorStatus = 1
+	ConnectorStatusDisconnected ConnectorStatus = 2
+	ConnectorStatusUnknown      ConnectorStatus = 3
+)
+
+func (s ConnectorStatus) String() string {
+	switch s {
+	case ConnectorStatusConnected:
+		return "Connected"
+	case ConnectorStatusDisconnected:
+		return "Disconnected"
+	default:
+		return "Unknown"
+	}
+}
+
+type Subpixel uint32
+
+const (
+	SubpixelUnknown       Subpixel = 0
+	SubpixelHorizontalRGB Subpixel = 1
+	SubpixelHorizontalBGR Subpixel = 3
+	SubpixelVerticalRGB   Subpixel = 4
+	SubpixelVerticalBGR   Subpixel = 5
+	SubpixelNone          Subpixel = 6
+)
+
+func (s Subpixel) String() string {
+	switch s {
+	case SubpixelHorizontalRGB:
+		return "Horizontal RGB"
+	case SubpixelHorizontalBGR:
+		return "Horizontal BGR"
+	case SubpixelVerticalRGB:
+		return "Vertical RGB"
+	case SubpixelVerticalBGR:
+		return "Vertical BGR"
+	case SubpixelNone:
+		return "None"
+	default:
+		return "Unknown"
+	}
+}

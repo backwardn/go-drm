@@ -52,6 +52,14 @@ func node(nodePath string) {
 		}
 		log.Println("ModeGetEncoder", enc)
 	}
+
+	for _, id := range r.Connectors {
+		conn, err := n.ModeGetConnector(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("ModeGetConnector", conn)
+	}
 }
 
 func main() {

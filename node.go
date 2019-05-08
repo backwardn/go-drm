@@ -155,6 +155,14 @@ func newModeModeInfo(info *modeModeInfo) *ModeModeInfo {
 	}
 }
 
+func newModeModeInfoList(infos []modeModeInfo) []ModeModeInfo {
+	l := make([]ModeModeInfo, len(infos))
+	for i, info := range infos {
+		l[i] = *newModeModeInfo(&info)
+	}
+	return l
+}
+
 type ModeCRTC struct {
 	ID        ObjectID
 	FB        ObjectID
@@ -204,4 +212,69 @@ func (n *Node) ModeGetEncoder(id ObjectID) (*ModeEncoder, error) {
 		PossibleCRTCs:  r.possibleCRTCs,
 		PossibleClones: r.possibleClones,
 	}, nil
+}
+
+type ModeConnector struct {
+	PossibleEncoders []ObjectID
+	Modes            []ModeModeInfo
+	PropIDs          []ObjectID
+	PropValues       []uint64
+
+	Encoder ObjectID
+	ID      ObjectID
+	Type    ConnectorType
+
+	Status              ConnectorStatus
+	PhyWidth, PhyHeight uint32 // mm
+	Subpixel            Subpixel
+}
+
+func (n *Node) ModeGetConnector(id ObjectID) (*ModeConnector, error) {
+	for {
+		r := modeConnectorResp{id: uint32(id)}
+		if err := modeGetConnector(n.fd, &r); err != nil {
+			return nil, err
+		}
+		count := r
+
+		var encoders, propIDs []ObjectID
+		var modes []modeModeInfo
+		var propValues []uint64
+		if r.propsLen > 0 {
+			propIDs = make([]ObjectID, r.propsLen)
+			r.propIDs = (*uint32)(unsafe.Pointer(&propIDs[0]))
+			propValues = make([]uint64, r.propsLen)
+			r.propValues = (*uint64)(unsafe.Pointer(&propValues[0]))
+		}
+		if r.modesLen > 0 {
+			modes = make([]modeModeInfo, r.modesLen)
+			r.modes = (*modeModeInfo)(unsafe.Pointer(&modes[0]))
+		}
+		if r.encodersLen > 0 {
+			encoders = make([]ObjectID, r.encodersLen)
+			r.encoders = (*uint32)(unsafe.Pointer(&encoders[0]))
+		}
+
+		if err := modeGetConnector(n.fd, &r); err != nil {
+			return nil, err
+		}
+
+		if r.propsLen != count.propsLen || r.modesLen != count.modesLen || r.encodersLen != count.encodersLen {
+			continue
+		}
+
+		return &ModeConnector{
+			PossibleEncoders: encoders,
+			Modes:            newModeModeInfoList(modes),
+			PropIDs:          propIDs,
+			PropValues:       propValues,
+			Encoder:          ObjectID(r.encoder),
+			ID:               ObjectID(r.id),
+			Type:             ConnectorType(r.typ),
+			Status:           ConnectorStatus(r.status),
+			PhyWidth:         r.phyWidth,
+			PhyHeight:        r.phyHeight,
+			Subpixel:         Subpixel(r.subpixel),
+		}, nil
+	}
 }
