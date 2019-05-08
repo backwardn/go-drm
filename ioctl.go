@@ -13,12 +13,13 @@ const (
 	ioctlGetCap       = 0xC010640C
 	ioctlSetClientCap = 0x4010640D
 
-	ioctlModeGetResources      = 0xC04064A0
-	ioctlModeGetCRTC           = 0xC06864A1
-	ioctlModeGetEncoder        = 0xC01464A6
-	ioctlModeGetConnector      = 0xC05064A7
-	ioctlModeGetPlaneResources = 0xC01064B5
-	ioctlModeGetPlane          = 0xC02064B6
+	ioctlModeGetResources        = 0xC04064A0
+	ioctlModeGetCRTC             = 0xC06864A1
+	ioctlModeGetEncoder          = 0xC01464A6
+	ioctlModeGetConnector        = 0xC05064A7
+	ioctlModeGetPlaneResources   = 0xC01064B5
+	ioctlModeGetPlane            = 0xC02064B6
+	ioctlModeObjectGetProperties = 0xC02064B9
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -174,4 +175,17 @@ type modePlaneResp struct {
 
 func modeGetPlane(fd uintptr, r *modePlaneResp) error {
 	return ioctl(fd, ioctlModeGetPlane, unsafe.Pointer(r))
+}
+
+type modeObjectGetPropertiesResp struct {
+	propIDs    *uint32
+	propValues *uint64
+	propsLen   uint32
+
+	id  uint32
+	typ uint32
+}
+
+func modeObjectGetProperties(fd uintptr, r *modeObjectGetPropertiesResp) error {
+	return ioctl(fd, ioctlModeObjectGetProperties, unsafe.Pointer(r))
 }

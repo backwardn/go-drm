@@ -1,6 +1,7 @@
 package drm
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -58,6 +59,31 @@ type (
 type AnyID interface {
 	Type() ObjectType
 	Object() ObjectID
+}
+
+func NewAnyID(id ObjectID, t ObjectType) AnyID {
+	switch t {
+	case ObjectAny:
+		return id
+	case ObjectCRTC:
+		return CRTCID(id)
+	case ObjectConnector:
+		return ConnectorID(id)
+	case ObjectEncoder:
+		return EncoderID(id)
+	case ObjectMode:
+		return ModeID(id)
+	case ObjectProperty:
+		return PropertyID(id)
+	case ObjectFB:
+		return FBID(id)
+	case ObjectBlob:
+		return BlobID(id)
+	case ObjectPlane:
+		return PlaneID(id)
+	default:
+		panic(fmt.Sprintf("drm: unknown object type %v", t))
+	}
 }
 
 func (id ObjectID) Type() ObjectType {
@@ -480,5 +506,41 @@ func (n *Node) ModeGetPlane(id PlaneID) (*ModePlane, error) {
 			GammaSize:     r.gammaSize,
 			Formats:       formats,
 		}, nil
+	}
+}
+
+func (n *Node) ModeObjectGetProperties(id AnyID) (map[PropertyID]uint64, error) {
+	for {
+		r := modeObjectGetPropertiesResp{
+			id:  uint32(id.Object()),
+			typ: uint32(id.Type()),
+		}
+		if err := modeObjectGetProperties(n.fd, &r); err != nil {
+			return nil, err
+		}
+		count := r
+
+		var propIDs []PropertyID
+		var propValues []uint64
+		if r.propsLen > 0 {
+			propIDs = make([]PropertyID, r.propsLen)
+			r.propIDs = (*uint32)(unsafe.Pointer(&propIDs[0]))
+			propValues = make([]uint64, r.propsLen)
+			r.propValues = (*uint64)(unsafe.Pointer(&propValues[0]))
+		}
+
+		if err := modeObjectGetProperties(n.fd, &r); err != nil {
+			return nil, err
+		}
+
+		if r.propsLen != count.propsLen {
+			continue
+		}
+
+		m := make(map[PropertyID]uint64, r.propsLen)
+		for i := 0; i < int(r.propsLen); i++ {
+			m[propIDs[i]] = propValues[i]
+		}
+		return m, nil
 	}
 }
