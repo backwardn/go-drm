@@ -375,8 +375,6 @@ func (n *Node) ModeGetEncoder(id EncoderID) (*ModeEncoder, error) {
 type ModeConnector struct {
 	PossibleEncoders []EncoderID
 	Modes            []ModeModeInfo
-	PropIDs          []PropertyID
-	PropValues       []uint64
 
 	Encoder ObjectID
 	ID      ObjectID
@@ -396,15 +394,7 @@ func (n *Node) ModeGetConnector(id ConnectorID) (*ModeConnector, error) {
 		count := r
 
 		var encoders []EncoderID
-		var propIDs []PropertyID
 		var modes []modeModeInfo
-		var propValues []uint64
-		if r.propsLen > 0 {
-			propIDs = make([]PropertyID, r.propsLen)
-			r.propIDs = (*uint32)(unsafe.Pointer(&propIDs[0]))
-			propValues = make([]uint64, r.propsLen)
-			r.propValues = (*uint64)(unsafe.Pointer(&propValues[0]))
-		}
 		if r.modesLen > 0 {
 			modes = make([]modeModeInfo, r.modesLen)
 			r.modes = (*modeModeInfo)(unsafe.Pointer(&modes[0]))
@@ -414,19 +404,19 @@ func (n *Node) ModeGetConnector(id ConnectorID) (*ModeConnector, error) {
 			r.encoders = (*uint32)(unsafe.Pointer(&encoders[0]))
 		}
 
+		r.propsLen = 0 // don't retrieve properties
+
 		if err := modeGetConnector(n.fd, &r); err != nil {
 			return nil, err
 		}
 
-		if r.propsLen != count.propsLen || r.modesLen != count.modesLen || r.encodersLen != count.encodersLen {
+		if r.modesLen != count.modesLen || r.encodersLen != count.encodersLen {
 			continue
 		}
 
 		return &ModeConnector{
 			PossibleEncoders: encoders,
 			Modes:            newModeModeInfoList(modes),
-			PropIDs:          propIDs,
-			PropValues:       propValues,
 			Encoder:          ObjectID(r.encoder),
 			ID:               ObjectID(r.id),
 			Type:             ConnectorType(r.typ),
