@@ -19,9 +19,9 @@ type Version struct {
 	Name, Date, Desc    string
 }
 
-func (d *Node) Version() (*Version, error) {
+func (n *Node) Version() (*Version, error) {
 	var v versionResp
-	if err := version(d.fd, &v); err != nil {
+	if err := version(n.fd, &v); err != nil {
 		return nil, err
 	}
 
@@ -29,7 +29,7 @@ func (d *Node) Version() (*Version, error) {
 	date := allocBytes(&v.date, v.dateLen)
 	desc := allocBytes(&v.desc, v.descLen)
 
-	if err := version(d.fd, &v); err != nil {
+	if err := version(n.fd, &v); err != nil {
 		return nil, err
 	}
 
@@ -50,16 +50,16 @@ type PCIDevice struct {
 
 type Device interface{}
 
-func (d *Node) GetDevice() (Device, error) {
-	return d.getDevice()
+func (n *Node) GetDevice() (Device, error) {
+	return n.getDevice()
 }
 
-func (d *Node) GetCap(cap Cap) (uint64, error) {
-	return getCap(d.fd, uint64(cap))
+func (n *Node) GetCap(cap Cap) (uint64, error) {
+	return getCap(n.fd, uint64(cap))
 }
 
-func (d *Node) SetClientCap(cap ClientCap, val uint64) error {
-	return setClientCap(d.fd, uint64(cap), val)
+func (n *Node) SetClientCap(cap ClientCap, val uint64) error {
+	return setClientCap(n.fd, uint64(cap), val)
 }
 
 type ModeCard struct {
@@ -67,10 +67,10 @@ type ModeCard struct {
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32
 }
 
-func (d *Node) ModeGetResources() (*ModeCard, error) {
+func (n *Node) ModeGetResources() (*ModeCard, error) {
 	for {
 		var r modeCardResp
-		if err := modeGetResources(d.fd, &r); err != nil {
+		if err := modeGetResources(n.fd, &r); err != nil {
 			return nil, err
 		}
 		count := r
@@ -93,7 +93,7 @@ func (d *Node) ModeGetResources() (*ModeCard, error) {
 			r.encoders = (*uint32)(unsafe.Pointer(&encoders[0]))
 		}
 
-		if err := modeGetResources(d.fd, &r); err != nil {
+		if err := modeGetResources(n.fd, &r); err != nil {
 			return nil, err
 		}
 
@@ -163,9 +163,9 @@ type ModeCRTC struct {
 	Mode      *ModeModeInfo
 }
 
-func (d *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
+func (n *Node) ModeGetCRTC(id ObjectID) (*ModeCRTC, error) {
 	r := modeCRTCResp{id: uint32(id)}
-	if err := modeGetCRTC(d.fd, &r); err != nil {
+	if err := modeGetCRTC(n.fd, &r); err != nil {
 		return nil, err
 	}
 
