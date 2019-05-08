@@ -170,13 +170,13 @@ func (t EncoderType) String() string {
 	case EncoderLVDS:
 		return "LVDS"
 	case EncoderTVDAC:
-		return "TVDAC"
+		return "TV DAC"
 	case EncoderVirtual:
 		return "Virtual"
 	case EncoderDSI:
 		return "DSI"
 	case EncoderDPMST:
-		return "DPMST"
+		return "DP MST"
 	case EncoderDPI:
 		return "DPI"
 	default:
