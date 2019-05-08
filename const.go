@@ -78,32 +78,32 @@ const (
 	CapPrimeExport = 0x2
 )
 
-type Connector uint32
+type ConnectorType uint32
 
 const (
-	ConnectorUnknown     Connector = 0
-	ConnectorVGA         Connector = 1
-	ConnectorDVII        Connector = 2
-	ConnectorDVID        Connector = 3
-	ConnectorDVIA        Connector = 4
-	ConnectorComposite   Connector = 5
-	ConnectorSVideo      Connector = 6
-	ConnectorLVDS        Connector = 7
-	ConnectorComponent   Connector = 8
-	Connector9PinDIN     Connector = 9
-	ConnectorDisplayPort Connector = 10
-	ConnectorHDMIA       Connector = 11
-	ConnectorHDMIB       Connector = 12
-	ConnectorTV          Connector = 13
-	ConnectorEDP         Connector = 14
-	ConnectorVirtual     Connector = 15
-	ConnectorDSI         Connector = 16
-	ConnectorDPI         Connector = 17
-	ConnectorWriteback   Connector = 18
+	ConnectorUnknown     ConnectorType = 0
+	ConnectorVGA         ConnectorType = 1
+	ConnectorDVII        ConnectorType = 2
+	ConnectorDVID        ConnectorType = 3
+	ConnectorDVIA        ConnectorType = 4
+	ConnectorComposite   ConnectorType = 5
+	ConnectorSVideo      ConnectorType = 6
+	ConnectorLVDS        ConnectorType = 7
+	ConnectorComponent   ConnectorType = 8
+	Connector9PinDIN     ConnectorType = 9
+	ConnectorDisplayPort ConnectorType = 10
+	ConnectorHDMIA       ConnectorType = 11
+	ConnectorHDMIB       ConnectorType = 12
+	ConnectorTV          ConnectorType = 13
+	ConnectorEDP         ConnectorType = 14
+	ConnectorVirtual     ConnectorType = 15
+	ConnectorDSI         ConnectorType = 16
+	ConnectorDPI         ConnectorType = 17
+	ConnectorWriteback   ConnectorType = 18
 )
 
-func (c Connector) String() string {
-	switch c {
+func (t ConnectorType) String() string {
+	switch t {
 	case ConnectorVGA:
 		return "VGA"
 	case ConnectorDVII:
