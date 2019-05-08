@@ -47,6 +47,10 @@ func (d *Node) GetCap(cap Cap) (uint64, error) {
 	return getCap(d.fd, uint64(cap))
 }
 
+func (d *Node) SetClientCap(cap ClientCap, val uint64) error {
+	return setClientCap(d.fd, uint64(cap), val)
+}
+
 type ModeCard struct {
 	FBs, CRTCs, Connectors, Encoders         []ObjectID
 	MinWidth, MaxWidth, MinHeight, MaxHeight uint32

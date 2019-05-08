@@ -25,6 +25,9 @@ func node(nodePath string) {
 	val, err := n.GetCap(drm.CapDumbBuffer)
 	log.Println("CapDumbBuffer", val, err)
 
+	err = n.SetClientCap(drm.ClientCapUniversalPlanes, 1)
+	log.Println("ClientCapUniversalPlanes", err)
+
 	r, err := n.ModeGetResources()
 	if err != nil {
 		log.Fatal(err)
@@ -41,7 +44,7 @@ func node(nodePath string) {
 }
 
 func main() {
-	paths, err := filepath.Glob(drm.NodePrimaryPattern)
+	paths, err := filepath.Glob(drm.NodePatternPrimary)
 	if err != nil {
 		log.Fatal(err)
 	}

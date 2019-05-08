@@ -18,6 +18,16 @@ const (
 	CapSyncObj             Cap = 0x13
 )
 
+type ClientCap uint64
+
+const (
+	ClientCapStereo3D ClientCap = 1
+	ClientCapUniversalPlanes ClientCap = 2
+	ClientCapAtomic ClientCap = 3
+	ClientCapAspectRatio ClientCap = 4
+	ClientCapWritebackConnectors ClientCap = 5
+)
+
 const (
 	CapPrimeImport = 0x1
 	CapPrimeExport = 0x2
