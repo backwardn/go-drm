@@ -2,8 +2,8 @@ package drm
 
 import (
 	"fmt"
-	"strings"
 	"os"
+	"strings"
 )
 
 const drmMajor = 226
@@ -59,9 +59,9 @@ func getPCIDevice(devID uint64) (*PCIDevice, error) {
 	p := getPCIPath(devID)
 
 	var dev PCIDevice
-	props := []struct{
+	props := []struct {
 		name string
-		dst *uint32
+		dst  *uint32
 	}{
 		{"vendor", &dev.Vendor},
 		{"device", &dev.Device},

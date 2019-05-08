@@ -44,11 +44,11 @@ func (d *Node) Version() (*Version, error) {
 }
 
 type PCIDevice struct {
-	Vendor, Device uint32
+	Vendor, Device       uint32
 	SubVendor, SubDevice uint32
 }
 
-type Device interface {}
+type Device interface{}
 
 func (d *Node) GetDevice() (Device, error) {
 	return d.getDevice()

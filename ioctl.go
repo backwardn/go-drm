@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	ioctlVersion = 0xC0406400
-	ioctlGetCap  = 0xC010640C
+	ioctlVersion      = 0xC0406400
+	ioctlGetCap       = 0xC010640C
 	ioctlSetClientCap = 0x4010640D
 
 	ioctlModeGetResources = 0xC04064A0

@@ -11,10 +11,10 @@ const (
 type BusType int
 
 const (
-	BusPCI BusType = 0
-	BusUSB BusType = 1
+	BusPCI      BusType = 0
+	BusUSB      BusType = 1
 	BusPlatform BusType = 2
-	BusHost1x BusType = 3
+	BusHost1x   BusType = 3
 )
 
 type Cap uint64
@@ -38,10 +38,10 @@ const (
 type ClientCap uint64
 
 const (
-	ClientCapStereo3D ClientCap = 1
-	ClientCapUniversalPlanes ClientCap = 2
-	ClientCapAtomic ClientCap = 3
-	ClientCapAspectRatio ClientCap = 4
+	ClientCapStereo3D            ClientCap = 1
+	ClientCapUniversalPlanes     ClientCap = 2
+	ClientCapAtomic              ClientCap = 3
+	ClientCapAspectRatio         ClientCap = 4
 	ClientCapWritebackConnectors ClientCap = 5
 )
 

@@ -5,7 +5,7 @@ import (
 )
 
 func modeIsChr(mode uint32) bool {
-	return mode & syscall.S_IFMT == syscall.S_IFCHR
+	return mode&syscall.S_IFMT == syscall.S_IFCHR
 }
 
 func devIsDRM(dev uint64) bool {
