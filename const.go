@@ -1,5 +1,22 @@
 package drm
 
+type NodeType int
+
+const (
+	NodePrimary NodeType = 0
+	NodeControl NodeType = 1
+	NodeRender  NodeType = 2
+)
+
+type BusType int
+
+const (
+	BusPCI BusType = 0
+	BusUSB BusType = 1
+	BusPlatform BusType = 2
+	BusHost1x BusType = 3
+)
+
 type Cap uint64
 
 const (

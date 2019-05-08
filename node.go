@@ -43,6 +43,17 @@ func (d *Node) Version() (*Version, error) {
 	}, nil
 }
 
+type PCIDevice struct {
+	Vendor, Device uint32
+	SubVendor, SubDevice uint32
+}
+
+type Device interface {}
+
+func (d *Node) GetDevice() (Device, error) {
+	return d.getDevice()
+}
+
 func (d *Node) GetCap(cap Cap) (uint64, error) {
 	return getCap(d.fd, uint64(cap))
 }

@@ -22,6 +22,9 @@ func node(nodePath string) {
 	}
 	log.Println("Version", v)
 
+	dev, err := n.GetDevice()
+	log.Println("GetDevice", dev, err)
+
 	val, err := n.GetCap(drm.CapDumbBuffer)
 	log.Println("CapDumbBuffer", val, err)
 
