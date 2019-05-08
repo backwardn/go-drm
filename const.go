@@ -8,6 +8,19 @@ const (
 	NodeRender  NodeType = 2
 )
 
+func (t NodeType) String() string {
+	switch t {
+	case NodePrimary:
+		return "Primary"
+	case NodeControl:
+		return "Control"
+	case NodeRender:
+		return "Render"
+	default:
+		return "Unknown"
+	}
+}
+
 type BusType int
 
 const (
@@ -16,6 +29,21 @@ const (
 	BusPlatform BusType = 2
 	BusHost1x   BusType = 3
 )
+
+func (t BusType) String() string {
+	switch t {
+	case BusPCI:
+		return "PCI"
+	case BusUSB:
+		return "USB"
+	case BusPlatform:
+		return "Platform"
+	case BusHost1x:
+		return "host1x"
+	default:
+		return "Unknown"
+	}
+}
 
 type Cap uint64
 
@@ -73,3 +101,46 @@ const (
 	ConnectorDPI         Connector = 17
 	ConnectorWriteback   Connector = 18
 )
+
+func (c Connector) String() string {
+	switch c {
+	case ConnectorVGA:
+		return "VGA"
+	case ConnectorDVII:
+		return "DVII"
+	case ConnectorDVID:
+		return "DVID"
+	case ConnectorDVIA:
+		return "DVIA"
+	case ConnectorComposite:
+		return "Composite"
+	case ConnectorSVideo:
+		return "SVideo"
+	case ConnectorLVDS:
+		return "LVDS"
+	case ConnectorComponent:
+		return "Component"
+	case Connector9PinDIN:
+		return "9PinDIN"
+	case ConnectorDisplayPort:
+		return "DisplayPort"
+	case ConnectorHDMIA:
+		return "HDMIA"
+	case ConnectorHDMIB:
+		return "HDMIB"
+	case ConnectorTV:
+		return "TV"
+	case ConnectorEDP:
+		return "EDP"
+	case ConnectorVirtual:
+		return "Virtual"
+	case ConnectorDSI:
+		return "DSI"
+	case ConnectorDPI:
+		return "DPI"
+	case ConnectorWriteback:
+		return "Writeback"
+	default:
+		return "Unknown"
+	}
+}
