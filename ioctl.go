@@ -20,6 +20,7 @@ const (
 	ioctlModeGetPlaneResources   = 0xC01064B5
 	ioctlModeGetPlane            = 0xC02064B6
 	ioctlModeObjectGetProperties = 0xC02064B9
+	ioctlModeGetProperty         = 0xC04064AA
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -188,4 +189,24 @@ type modeObjectGetPropertiesResp struct {
 
 func modeObjectGetProperties(fd uintptr, r *modeObjectGetPropertiesResp) error {
 	return ioctl(fd, ioctlModeObjectGetProperties, unsafe.Pointer(r))
+}
+
+type modePropertyEnum struct {
+	value uint64
+	name  [32]byte
+}
+
+type modeGetPropertyResp struct {
+	values    uintptr // values and blob lengths
+	enumBlobs uintptr // enum items and blob IDs
+
+	id    uint32
+	flags uint32
+	name  [32]byte
+
+	valuesLen, enumBlobsLen uint32
+}
+
+func modeGetProperty(fd uintptr, r *modeGetPropertyResp) error {
+	return ioctl(fd, ioctlModeGetProperty, unsafe.Pointer(r))
 }

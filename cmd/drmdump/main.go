@@ -73,6 +73,22 @@ func node(nodePath string) {
 		}
 		log.Println("ModeGetPlane", plane)
 	}
+
+	if len(planes) > 0 {
+		props, err := n.ModeObjectGetProperties(planes[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for id := range props {
+			prop, err := n.ModeGetProperty(id)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Println("ModeGetProperty", prop)
+		}
+	}
 }
 
 func main() {
