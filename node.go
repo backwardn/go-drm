@@ -731,3 +731,22 @@ func (n *Node) ModeGetProperty(id PropertyID) (*ModeProperty, error) {
 		blobs:  newModePropertyBlobList(blobIDs, blobSizes),
 	}, nil
 }
+
+func (n *Node) ModeGetBlob(id BlobID) ([]byte, error) {
+	r := modeGetBlobResp{id: uint32(id)}
+	if err := modeGetBlob(n.fd, &r); err != nil {
+		return nil, err
+	}
+
+	var data []byte
+	if r.size > 0 {
+		data = make([]byte, r.size)
+		r.data = (*byte)(unsafe.Pointer(&data[0]))
+	}
+
+	if err := modeGetBlob(n.fd, &r); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
