@@ -30,6 +30,8 @@ func node(nodePath string) {
 
 	err = n.SetClientCap(drm.ClientCapUniversalPlanes, 1)
 	log.Println("ClientCapUniversalPlanes", err)
+	err = n.SetClientCap(drm.ClientCapAtomic, 1)
+	log.Println("ClientCapAtomic", err)
 
 	r, err := n.ModeGetResources()
 	if err != nil {
@@ -80,13 +82,13 @@ func node(nodePath string) {
 			log.Fatal(err)
 		}
 
-		for id := range props {
+		for id, val := range props {
 			prop, err := n.ModeGetProperty(id)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			log.Println("ModeGetProperty", prop)
+			log.Println("ModeGetProperty", prop.Type(), val, prop)
 		}
 	}
 }

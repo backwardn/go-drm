@@ -642,6 +642,13 @@ func (prop *ModeProperty) Atomic() bool {
 	return prop.flags&propertyAtomic != 0
 }
 
+func (prop *ModeProperty) Range() (low, high uint64, ok bool) {
+	if prop.Type() != PropertyRange || len(prop.values) != 2 {
+		return 0, 0, false
+	}
+	return prop.values[0], prop.values[1], true
+}
+
 func (prop *ModeProperty) Enums() ([]ModePropertyEnum, bool) {
 	switch prop.Type() {
 	case PropertyEnum, PropertyBitmask:
@@ -658,6 +665,20 @@ func (prop *ModeProperty) Blobs() ([]ModePropertyBlob, bool) {
 	default:
 		return nil, false
 	}
+}
+
+func (prop *ModeProperty) ObjectType() (ObjectType, bool) {
+	if prop.Type() != PropertyObject || len(prop.values) != 1 {
+		return 0, false
+	}
+	return ObjectType(prop.values[0]), true
+}
+
+func (prop *ModeProperty) SignedRange() (low, high int64, ok bool) {
+	if prop.Type() != PropertyRange || len(prop.values) != 2 {
+		return 0, 0, false
+	}
+	return int64(prop.values[0]), int64(prop.values[1]), true
 }
 
 func (n *Node) ModeGetProperty(id PropertyID) (*ModeProperty, error) {
