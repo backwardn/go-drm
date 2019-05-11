@@ -24,6 +24,6 @@ func (n *Node) getDevice() (Device, error) {
 	case BusPCI:
 		return getPCIDevice(stat.Rdev)
 	default:
-		return nil, fmt.Errorf("drm: unsupported bus type %v", bus)
+		return &unknownDevice{bus}, nil
 	}
 }
