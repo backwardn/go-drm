@@ -200,7 +200,21 @@ type PCIDevice struct {
 	SubVendor, SubDevice uint32
 }
 
-type Device interface{}
+func (d *PCIDevice) BusType() BusType {
+	return BusPCI
+}
+
+type unknownDevice struct {
+	busType BusType
+}
+
+func (d *unknownDevice) BusType() BusType {
+	return d.busType
+}
+
+type Device interface {
+	BusType() BusType
+}
 
 func (n *Node) GetDevice() (Device, error) {
 	return n.getDevice()
