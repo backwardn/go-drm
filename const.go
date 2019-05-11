@@ -248,9 +248,25 @@ func (f Format) String() string {
 type Modifier uint64
 
 const (
+	ModifierLinear Modifier = 0
 	ModifierInvalid Modifier = (1 << 56) - 1
 )
 
-func (mod Modifier) Vendor() uint8 {
-	return uint8(mod >> 56)
+func (mod Modifier) Vendor() ModifierVendor {
+	return ModifierVendor(mod >> 56)
 }
+
+type ModifierVendor uint8
+
+const (
+	ModifierVendorNone ModifierVendor = 0
+	ModifierVendorIntel ModifierVendor = 0x01
+	ModifierVendorAMD ModifierVendor = 0x02
+	ModifierVendorNVIDIA ModifierVendor = 0x03
+	ModifierVendorSamsung ModifierVendor = 0x04
+	ModifierVendorQcom ModifierVendor = 0x05
+	ModifierVendorVivante ModifierVendor = 0x06
+	ModifierVendorBroadcom ModifierVendor = 0x07
+	ModifierVendorARM ModifierVendor = 0x08
+	ModifierVendorAllwinner ModifierVendor = 0x09
+)
