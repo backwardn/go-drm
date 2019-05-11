@@ -21,7 +21,7 @@ const (
 	ioctlModeGetPlane            = 0xC02064B6
 	ioctlModeObjectGetProperties = 0xC02064B9
 	ioctlModeGetProperty         = 0xC04064AA
-	ioctlModeGetBlob = 0xC01064AC
+	ioctlModeGetBlob             = 0xC01064AC
 )
 
 func ioctl(fd uintptr, nr int, ptr unsafe.Pointer) error {
@@ -213,7 +213,7 @@ func modeGetProperty(fd uintptr, r *modeGetPropertyResp) error {
 }
 
 type modeGetBlobResp struct {
-	id uint32
+	id   uint32
 	size uint32
 	data *byte
 }
