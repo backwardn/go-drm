@@ -2,20 +2,44 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"git.sr.ht/~emersion/go-drm"
 )
+
+type TreePrinter struct {
+	w      io.Writer
+	indent int
+}
+
+func NewTreePrinter(w io.Writer) *TreePrinter {
+	return &TreePrinter{w: w}
+}
+
+func (tp *TreePrinter) NewChild() *TreePrinter {
+	return &TreePrinter{w: tp.w, indent: tp.indent + 1}
+}
+
+func (tp *TreePrinter) Printf(format string, v ...interface{}) {
+	fmt.Fprintf(tp.w, strings.Repeat("  ", tp.indent)+format+"\n", v...)
+}
 
 type DriverVersion struct {
 	Major int32  `json:"major"`
 	Minor int32  `json:"minor"`
 	Patch int32  `json:"patch"`
 	Date  string `json:"date"`
+}
+
+func (ver *DriverVersion) String() string {
+	return fmt.Sprintf("%v.%v.%v (%v)", ver.Major, ver.Minor, ver.Patch, ver.Date)
 }
 
 type Driver struct {
@@ -93,6 +117,34 @@ func driver(n *drm.Node) (*Driver, error) {
 	}, nil
 }
 
+func printDriver(tp *TreePrinter, drv *Driver) {
+	tp.Printf("Driver: %v (%v) version %v", drv.Name, drv.Desc, &drv.Version)
+	tpc := tp.NewChild()
+
+	for c, v := range drv.Caps {
+		if v != nil {
+			if c == "PRIME" {
+				tpc.Printf("DRM_CAP_PRIME supported")
+				tpcc := tpc.NewChild()
+				tpcc.Printf("DRM_CAP_PRIME_IMPORT = %v", *v&drm.CapPrimeImport != 0)
+				tpcc.Printf("DRM_CAP_PRIME_EXPORT = %v", *v&drm.CapPrimeExport != 0)
+			} else {
+				tpc.Printf("DRM_CAP_%v = %v", c, *v)
+			}
+		} else {
+			tpc.Printf("DRM_CAP_%v unsupported", c)
+		}
+	}
+
+	for c, ok := range drv.ClientCaps {
+		if ok {
+			tpc.Printf("DRM_CLIENT_CAP_%v supported", c)
+		} else {
+			tpc.Printf("DRM_CLIENT_CAP_%v unsupported", c)
+		}
+	}
+}
+
 type DevicePCI struct {
 	Vendor    uint32 `json:"vendor"`
 	Device    uint32 `json:"device"`
@@ -127,6 +179,31 @@ func device(n *drm.Node) (*Device, error) {
 	}
 }
 
+func printDevice(tp *TreePrinter, dev *Device) {
+	switch dev.BusType {
+	case drm.BusPCI:
+		tp.Printf("Device: %v %04X:%04X", dev.BusType, dev.PCI.Vendor, dev.PCI.Device)
+	default:
+		tp.Printf("Device: %v", dev.BusType)
+	}
+}
+
+func bitfieldString(v uint32) string {
+	s := "{"
+	first := true
+	for i := 0; i < 32; i++ {
+		if v&(1<<uint(i)) != 0 {
+			if !first {
+				s += ", "
+			}
+			s += fmt.Sprintf("%v", i)
+			first = false
+		}
+	}
+	s += "}"
+	return s
+}
+
 type Mode struct {
 	Clock      uint32 `json:"clock"`
 	HDisplay   uint16 `json:"hdisplay"`
@@ -143,6 +220,11 @@ type Mode struct {
 	Flags      uint32 `json:"flags"`
 	Type       uint32 `json:"type"`
 	Name       string `json:"name"`
+}
+
+func (mode *Mode) String() string {
+	// TODO: refresh and flags
+	return mode.Name
 }
 
 func modeList(modes []drm.ModeModeInfo) []Mode {
@@ -212,7 +294,7 @@ type Property struct {
 	RawValue  uint64           `json:"raw_value"`
 	// Value interpreted with the property type
 	Value interface{} `json:"value"`
-	// Value interpreted with the property name
+	// Value interpreted with the property name, optional
 	Data interface{} `json:"data,omitempty"`
 }
 
@@ -279,6 +361,18 @@ func properties(n *drm.Node, id drm.AnyID) (map[string]Property, error) {
 	return m, nil
 }
 
+func printProperties(tp *TreePrinter, props map[string]Property) {
+	for name, prop := range props {
+		// TODO: immutable, atomic
+		// TODO: type-specific property data
+		val := prop.Data
+		if val == nil {
+			val = prop.Value
+		}
+		tp.Printf("%q: %v = %v", name, prop.Type, val)
+	}
+}
+
 type Connector struct {
 	ID         drm.ConnectorID     `json:"id"`
 	Type       drm.ConnectorType   `json:"type"`
@@ -319,6 +413,46 @@ func connectors(n *drm.Node, card *drm.ModeCard) ([]Connector, error) {
 	return l, nil
 }
 
+func encoderIDsString(encs []drm.EncoderID) string {
+	s := "{"
+	for i, id := range encs {
+		if i != 0 {
+			s += ", "
+		}
+		s += fmt.Sprintf("%v", id)
+	}
+	s += "}"
+	return s
+}
+
+func printModes(tp *TreePrinter, modes []Mode) {
+	for _, mode := range modes {
+		tp.Printf("%v", &mode)
+	}
+}
+
+func printConnectors(tp *TreePrinter, conns []Connector) {
+	for i, conn := range conns {
+		tp.Printf("Connector %v", i)
+		tpc := tp.NewChild()
+
+		tpc.Printf("Object ID: %v", conn.ID)
+		tpc.Printf("Type: %v", conn.Type)
+		tpc.Printf("Status: %v", conn.Status)
+		tpc.Printf("Physical size: %vx%v mm", conn.PhyWidth, conn.PhyHeight)
+		tpc.Printf("Subpixel: %v", conn.Subpixel)
+		tpc.Printf("Encoders: %v", encoderIDsString(conn.Encoders))
+		if len(conn.Modes) > 0 {
+			tpc.Printf("Modes")
+			printModes(tpc.NewChild(), conn.Modes)
+		}
+		if len(conn.Properties) > 0 {
+			tpc.Printf("Properties")
+			printProperties(tpc.NewChild(), conn.Properties)
+		}
+	}
+}
+
 type Encoder struct {
 	ID             drm.EncoderID   `json:"id"`
 	Type           drm.EncoderType `json:"type"`
@@ -338,6 +472,18 @@ func encoders(n *drm.Node, card *drm.ModeCard) ([]Encoder, error) {
 		l[i] = Encoder(*enc)
 	}
 	return l, nil
+}
+
+func printEncoders(tp *TreePrinter, encs []Encoder) {
+	for i, enc := range encs {
+		tp.Printf("Encoder %v", i)
+		tpc := tp.NewChild()
+
+		tpc.Printf("Object ID: %v", enc.ID)
+		tpc.Printf("Type: %v", enc.Type)
+		tpc.Printf("CRTCs: %v", bitfieldString(enc.PossibleCRTCs))
+		tpc.Printf("Clones: %v", bitfieldString(enc.PossibleClones))
+	}
 }
 
 type CRTC struct {
@@ -374,6 +520,25 @@ func crtcs(n *drm.Node, card *drm.ModeCard) ([]CRTC, error) {
 		}
 	}
 	return l, nil
+}
+
+func printCRTCs(tp *TreePrinter, crtcs []CRTC) {
+	for i, crtc := range crtcs {
+		tp.Printf("CRTC %v", i)
+		tpc := tp.NewChild()
+
+		tpc.Printf("Object ID: %v", crtc.ID)
+		tpc.Printf("FB: %v", crtc.FB)
+		tpc.Printf("Position: %v, %v", crtc.X, crtc.Y)
+		tpc.Printf("Gamma size: %v", crtc.GammaSize)
+		if crtc.Mode != nil {
+			tpc.Printf("Mode: %v", crtc.Mode)
+		}
+		if len(crtc.Properties) > 0 {
+			tpc.Printf("Properties")
+			printProperties(tpc.NewChild(), crtc.Properties)
+		}
+	}
 }
 
 type Plane struct {
@@ -416,6 +581,33 @@ func planes(n *drm.Node) ([]Plane, error) {
 	}
 
 	return l, nil
+}
+
+func printFormats(tp *TreePrinter, formats []drm.Format) {
+	for _, fmt := range formats {
+		tp.Printf("%v", fmt)
+	}
+}
+
+func printPlanes(tp *TreePrinter, planes []Plane) {
+	for i, plane := range planes {
+		tp.Printf("Plane %v", i)
+		tpc := tp.NewChild()
+
+		tpc.Printf("Object ID: %v", plane.ID)
+		tpc.Printf("CRTC: %v", plane.CRTC)
+		tpc.Printf("FB: %v", plane.FB)
+		tpc.Printf("CRTCs: %v", bitfieldString(plane.PossibleCRTCs))
+		tpc.Printf("Gamma size: %v", plane.GammaSize)
+		if len(plane.Formats) > 0 {
+			tpc.Printf("Formats")
+			printFormats(tpc.NewChild(), plane.Formats)
+		}
+		if len(plane.Properties) > 0 {
+			tpc.Printf("Properties")
+			printProperties(tpc.NewChild(), plane.Properties)
+		}
+	}
 }
 
 type Node struct {
@@ -481,23 +673,56 @@ func node(nodePath string) (*Node, error) {
 	}, nil
 }
 
+func printNode(tp *TreePrinter, path string, n *Node) {
+	tp.Printf("Node: %s", path)
+	tpc := tp.NewChild()
+
+	printDriver(tpc, n.Driver)
+	printDevice(tpc, n.Device)
+
+	tpc.Printf("Connectors")
+	printConnectors(tpc.NewChild(), n.Connectors)
+
+	tpc.Printf("Encoders")
+	printEncoders(tpc.NewChild(), n.Encoders)
+
+	tpc.Printf("CRTCs")
+	printCRTCs(tpc.NewChild(), n.CRTCs)
+
+	tpc.Printf("Planes")
+	printPlanes(tpc.NewChild(), n.Planes)
+}
+
 func main() {
+	var (
+		outputJSON bool
+	)
+	flag.BoolVar(&outputJSON, "j", false, "Enable JSON output")
+	flag.Parse()
+
 	paths, err := filepath.Glob(drm.NodePatternPrimary)
 	if err != nil {
 		log.Fatalf("Failed to list DRM nodes: %v", err)
 	}
 
-	m := make(map[string]*Node)
+	nodes := make(map[string]*Node)
 	for _, p := range paths {
 		n, err := node(p)
 		if err != nil {
 			log.Fatal(err)
 		}
-		m[p] = n
+		nodes[p] = n
 	}
 
-	err = json.NewEncoder(os.Stdout).Encode(m)
-	if err != nil {
-		log.Fatalf("Failed to write JSON: %v", err)
+	if outputJSON {
+		err = json.NewEncoder(os.Stdout).Encode(nodes)
+		if err != nil {
+			log.Fatalf("Failed to write JSON: %v", err)
+		}
+	} else {
+		tp := NewTreePrinter(os.Stdout)
+		for path, n := range nodes {
+			printNode(tp, path, n)
+		}
 	}
 }

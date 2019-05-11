@@ -2,9 +2,9 @@ package drm
 
 import (
 	"fmt"
-	"unsafe"
-	"runtime"
 	"reflect"
+	"runtime"
+	"unsafe"
 )
 
 const formatModifierCurrentVersion = 1
