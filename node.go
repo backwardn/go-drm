@@ -376,8 +376,8 @@ type ModeConnector struct {
 	PossibleEncoders []EncoderID
 	Modes            []ModeModeInfo
 
-	Encoder ObjectID
-	ID      ObjectID
+	Encoder EncoderID
+	ID      ConnectorID
 	Type    ConnectorType
 
 	Status              ConnectorStatus
@@ -417,8 +417,8 @@ func (n *Node) ModeGetConnector(id ConnectorID) (*ModeConnector, error) {
 		return &ModeConnector{
 			PossibleEncoders: encoders,
 			Modes:            newModeModeInfoList(modes),
-			Encoder:          ObjectID(r.encoder),
-			ID:               ObjectID(r.id),
+			Encoder:          EncoderID(r.encoder),
+			ID:               ConnectorID(r.id),
 			Type:             ConnectorType(r.typ),
 			Status:           ConnectorStatus(r.status),
 			PhyWidth:         r.phyWidth,
