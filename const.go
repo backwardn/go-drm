@@ -233,10 +233,24 @@ func (s Subpixel) String() string {
 
 type Format uint32
 
+const (
+	FormatInvalid Format = 0
+)
+
 func (f Format) String() string {
 	r1 := rune(uint32(f) & 0xFF)
 	r2 := rune(uint32(f>>8) & 0xFF)
 	r3 := rune(uint32(f>>16) & 0xFF)
 	r4 := rune(uint32(f>>24) & 0xFF)
 	return string([]rune{r1, r2, r3, r4})
+}
+
+type Modifier uint64
+
+const (
+	ModifierInvalid Modifier = (1 << 56) - 1
+)
+
+func (mod Modifier) Vendor() uint8 {
+	return uint8(mod >> 56)
 }
