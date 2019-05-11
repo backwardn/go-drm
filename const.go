@@ -11,13 +11,13 @@ const (
 func (t NodeType) String() string {
 	switch t {
 	case NodePrimary:
-		return "Primary"
+		return "primary"
 	case NodeControl:
-		return "Control"
+		return "control"
 	case NodeRender:
-		return "Render"
+		return "render"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -37,11 +37,11 @@ func (t BusType) String() string {
 	case BusUSB:
 		return "USB"
 	case BusPlatform:
-		return "Platform"
+		return "platform"
 	case BusHost1x:
 		return "host1x"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -107,41 +107,41 @@ func (t ConnectorType) String() string {
 	case ConnectorVGA:
 		return "VGA"
 	case ConnectorDVII:
-		return "DVII"
+		return "DVI-I"
 	case ConnectorDVID:
-		return "DVID"
+		return "DVI-D"
 	case ConnectorDVIA:
-		return "DVIA"
+		return "DVI-A"
 	case ConnectorComposite:
-		return "Composite"
+		return "composite"
 	case ConnectorSVideo:
-		return "SVideo"
+		return "S-Video"
 	case ConnectorLVDS:
 		return "LVDS"
 	case ConnectorComponent:
-		return "Component"
+		return "component"
 	case Connector9PinDIN:
 		return "9PinDIN"
 	case ConnectorDisplayPort:
 		return "DisplayPort"
 	case ConnectorHDMIA:
-		return "HDMIA"
+		return "HDMI-A"
 	case ConnectorHDMIB:
-		return "HDMIB"
+		return "HDMI-B"
 	case ConnectorTV:
 		return "TV"
 	case ConnectorEDP:
-		return "EDP"
+		return "eDP"
 	case ConnectorVirtual:
-		return "Virtual"
+		return "virtual"
 	case ConnectorDSI:
 		return "DSI"
 	case ConnectorDPI:
 		return "DPI"
 	case ConnectorWriteback:
-		return "Writeback"
+		return "writeback"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -162,7 +162,7 @@ const (
 func (t EncoderType) String() string {
 	switch t {
 	case EncoderNone:
-		return "None"
+		return "none"
 	case EncoderDAC:
 		return "DAC"
 	case EncoderTDMS:
@@ -172,7 +172,7 @@ func (t EncoderType) String() string {
 	case EncoderTVDAC:
 		return "TV DAC"
 	case EncoderVirtual:
-		return "Virtual"
+		return "virtual"
 	case EncoderDSI:
 		return "DSI"
 	case EncoderDPMST:
@@ -180,7 +180,7 @@ func (t EncoderType) String() string {
 	case EncoderDPI:
 		return "DPI"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -195,11 +195,11 @@ const (
 func (s ConnectorStatus) String() string {
 	switch s {
 	case ConnectorStatusConnected:
-		return "Connected"
+		return "connected"
 	case ConnectorStatusDisconnected:
-		return "Disconnected"
+		return "disconnected"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -217,17 +217,17 @@ const (
 func (s Subpixel) String() string {
 	switch s {
 	case SubpixelHorizontalRGB:
-		return "Horizontal RGB"
+		return "horizontal RGB"
 	case SubpixelHorizontalBGR:
-		return "Horizontal BGR"
+		return "horizontal BGR"
 	case SubpixelVerticalRGB:
-		return "Vertical RGB"
+		return "vertical RGB"
 	case SubpixelVerticalBGR:
-		return "Vertical BGR"
+		return "vertical BGR"
 	case SubpixelNone:
-		return "None"
+		return "none"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -274,7 +274,7 @@ const (
 func (vendor ModifierVendor) String() string {
 	switch vendor {
 	case ModifierVendorNone:
-		return "None"
+		return "none"
 	case ModifierVendorIntel:
 		return "Intel"
 	case ModifierVendorAMD:
@@ -294,6 +294,6 @@ func (vendor ModifierVendor) String() string {
 	case ModifierVendorAllwinner:
 		return "Allwinner"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }

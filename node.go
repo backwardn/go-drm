@@ -22,25 +22,25 @@ const (
 func (t ObjectType) String() string {
 	switch t {
 	case ObjectAny:
-		return "Any"
+		return "any"
 	case ObjectCRTC:
 		return "CRTC"
 	case ObjectConnector:
-		return "Connector"
+		return "connector"
 	case ObjectEncoder:
-		return "Encoder"
+		return "encoder"
 	case ObjectMode:
-		return "Mode"
+		return "mode"
 	case ObjectProperty:
-		return "Property"
+		return "property"
 	case ObjectFB:
 		return "FB"
 	case ObjectBlob:
-		return "Blob"
+		return "blob"
 	case ObjectPlane:
-		return "Plane"
+		return "plane"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
@@ -579,19 +579,19 @@ const (
 func (t PropertyType) String() string {
 	switch t {
 	case PropertyRange:
-		return "Range"
+		return "range"
 	case PropertyEnum:
-		return "Enum"
+		return "enum"
 	case PropertyBlob:
-		return "Blob"
+		return "blob"
 	case PropertyBitmask:
-		return "Bitmask"
+		return "bitmask"
 	case PropertyObject:
-		return "Object"
+		return "object"
 	case PropertySignedRange:
-		return "Signed range"
+		return "signed range"
 	default:
-		return "Unknown"
+		return "unknown"
 	}
 }
 
