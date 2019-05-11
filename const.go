@@ -248,7 +248,7 @@ func (f Format) String() string {
 type Modifier uint64
 
 const (
-	ModifierLinear Modifier = 0
+	ModifierLinear  Modifier = 0
 	ModifierInvalid Modifier = (1 << 56) - 1
 )
 
@@ -259,14 +259,41 @@ func (mod Modifier) Vendor() ModifierVendor {
 type ModifierVendor uint8
 
 const (
-	ModifierVendorNone ModifierVendor = 0
-	ModifierVendorIntel ModifierVendor = 0x01
-	ModifierVendorAMD ModifierVendor = 0x02
-	ModifierVendorNVIDIA ModifierVendor = 0x03
-	ModifierVendorSamsung ModifierVendor = 0x04
-	ModifierVendorQcom ModifierVendor = 0x05
-	ModifierVendorVivante ModifierVendor = 0x06
-	ModifierVendorBroadcom ModifierVendor = 0x07
-	ModifierVendorARM ModifierVendor = 0x08
+	ModifierVendorNone      ModifierVendor = 0
+	ModifierVendorIntel     ModifierVendor = 0x01
+	ModifierVendorAMD       ModifierVendor = 0x02
+	ModifierVendorNVIDIA    ModifierVendor = 0x03
+	ModifierVendorSamsung   ModifierVendor = 0x04
+	ModifierVendorQcom      ModifierVendor = 0x05
+	ModifierVendorVivante   ModifierVendor = 0x06
+	ModifierVendorBroadcom  ModifierVendor = 0x07
+	ModifierVendorARM       ModifierVendor = 0x08
 	ModifierVendorAllwinner ModifierVendor = 0x09
 )
+
+func (vendor ModifierVendor) String() string {
+	switch vendor {
+	case ModifierVendorNone:
+		return "None"
+	case ModifierVendorIntel:
+		return "Intel"
+	case ModifierVendorAMD:
+		return "AMD"
+	case ModifierVendorNVIDIA:
+		return "NVIDIA"
+	case ModifierVendorSamsung:
+		return "Samsung"
+	case ModifierVendorQcom:
+		return "Qcom"
+	case ModifierVendorVivante:
+		return "Vivante"
+	case ModifierVendorBroadcom:
+		return "Broadcom"
+	case ModifierVendorARM:
+		return "ARM"
+	case ModifierVendorAllwinner:
+		return "Allwinner"
+	default:
+		return "Unknown"
+	}
+}
