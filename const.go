@@ -345,3 +345,24 @@ func (vendor ModifierVendor) String() string {
 		return "unknown"
 	}
 }
+
+type PlaneType uint32
+
+const (
+	PlaneOverlay PlaneType = 0
+	PlanePrimary PlaneType = 1
+	PlaneCursor PlaneType = 2
+)
+
+func (t PlaneType) String() string {
+	switch t {
+	case PlaneOverlay:
+		return "overlay"
+	case PlanePrimary:
+		return "primary"
+	case PlaneCursor:
+		return "cursor"
+	default:
+		return "unknown"
+	}
+}
