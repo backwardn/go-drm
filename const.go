@@ -63,6 +63,38 @@ const (
 	CapSyncObj             Cap = 0x13
 )
 
+func (c Cap) String() string {
+	switch c {
+	case CapDumbBuffer:
+		return "DUMB_BUFFER"
+	case CapVblankHighCRTC:
+		return "VBLANK_HIGH_CRTC"
+	case CapDumbPreferredDepth:
+		return "DUMB_PREFERRED_DEPTH"
+	case CapDumbPreferredShadow:
+		return "DUMB_PREFER_SHADOW"
+	case CapPrime:
+		return "PRIME"
+	case CapTimestampMonotonic:
+		return "TIMESTAMP_MONOTONIC"
+	case CapAsyncPageFlip:
+		return "ASYNC_PAGE_FLIP"
+	case CapCursorWidth:
+		return "CURSOR_WIDTH"
+	case CapCursorHeight:
+		return "CURSOR_HEIGHT"
+	case CapAddFB2Modifiers:
+		return "ADDFB2_MODIFIERS"
+	case CapPageFlipTarget:
+		return "PAGE_FLIP_TARGET"
+	case CapCRTCInVBlankEvent:
+		return "CRTC_IN_VBLANK_EVENT"
+	case CapSyncObj:
+		return "SYNCOBJ"
+	}
+	return "unknown"
+}
+
 type ClientCap uint64
 
 const (
@@ -72,6 +104,22 @@ const (
 	ClientCapAspectRatio         ClientCap = 4
 	ClientCapWritebackConnectors ClientCap = 5
 )
+
+func (c ClientCap) String() string {
+	switch c {
+	case ClientCapStereo3D:
+		return "STEREO_3D"
+	case ClientCapUniversalPlanes:
+		return "UNIVERSAL_PLANES"
+	case ClientCapAtomic:
+		return "ATOMIC"
+	case ClientCapAspectRatio:
+		return "APSECT_RATIO"
+	case ClientCapWritebackConnectors:
+		return "WRITEBACK_CONNECTORS"
+	}
+	return "unknown"
+}
 
 const (
 	CapPrimeImport = 0x1
