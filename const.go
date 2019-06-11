@@ -61,6 +61,7 @@ const (
 	CapPageFlipTarget      Cap = 0x11
 	CapCRTCInVBlankEvent   Cap = 0x12
 	CapSyncObj             Cap = 0x13
+	CapSyncObjTimeline     Cap = 0x14
 )
 
 func (c Cap) String() string {
@@ -91,6 +92,8 @@ func (c Cap) String() string {
 		return "CRTC_IN_VBLANK_EVENT"
 	case CapSyncObj:
 		return "SYNCOBJ"
+	case CapSyncObjTimeline:
+		return "SYNCOBJ_TIMELINE"
 	}
 	return "unknown"
 }
