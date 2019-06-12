@@ -287,7 +287,7 @@ type PlaneType uint32
 const (
 	PlaneOverlay PlaneType = 0
 	PlanePrimary PlaneType = 1
-	PlaneCursor PlaneType = 2
+	PlaneCursor  PlaneType = 2
 )
 
 func (t PlaneType) String() string {
